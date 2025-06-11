@@ -85,6 +85,9 @@ namespace SpotifyClone.Migrations
                     b.Property<bool>("IsVerified")
                         .HasColumnType("bit");
 
+                    b.Property<int>("Listens")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -101,7 +104,7 @@ namespace SpotifyClone.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("Artist");
+                    b.ToTable("Artists");
                 });
 
             modelBuilder.Entity("SpotifyClone.Models.ArtistDetails", b =>
@@ -274,7 +277,7 @@ namespace SpotifyClone.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
@@ -302,9 +305,6 @@ namespace SpotifyClone.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Email")
-                        .IsUnique();
-
                     b.ToTable("Users");
                 });
 
@@ -325,14 +325,11 @@ namespace SpotifyClone.Migrations
 
                     b.Property<string>("Username")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.HasIndex("Username")
                         .IsUnique();
 
                     b.ToTable("UserDetails");
@@ -358,7 +355,7 @@ namespace SpotifyClone.Migrations
                     b.HasOne("SpotifyClone.Models.Artist", "Artist")
                         .WithMany("Albums")
                         .HasForeignKey("ArtistId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Artist");
@@ -369,7 +366,7 @@ namespace SpotifyClone.Migrations
                     b.HasOne("SpotifyClone.Models.User", "User")
                         .WithOne("Artist")
                         .HasForeignKey("SpotifyClone.Models.Artist", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("User");
@@ -391,17 +388,17 @@ namespace SpotifyClone.Migrations
                     b.HasOne("SpotifyClone.Models.Album", "Album")
                         .WithMany("Genres")
                         .HasForeignKey("AlbumId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("SpotifyClone.Models.Artist", "Artist")
                         .WithMany("Genres")
                         .HasForeignKey("ArtistId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("SpotifyClone.Models.Song", "Song")
                         .WithMany("Genres")
                         .HasForeignKey("SongId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Album");
 
@@ -415,12 +412,12 @@ namespace SpotifyClone.Migrations
                     b.HasOne("SpotifyClone.Models.Artist", "Artist")
                         .WithMany("Playlists")
                         .HasForeignKey("ArtistId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("SpotifyClone.Models.UserDetails", "UserDetails")
-                        .WithMany()
+                        .WithMany("Playlists")
                         .HasForeignKey("UserDetailsId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Artist");
 
@@ -503,6 +500,11 @@ namespace SpotifyClone.Migrations
 
                     b.Navigation("UserDetails")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("SpotifyClone.Models.UserDetails", b =>
+                {
+                    b.Navigation("Playlists");
                 });
 #pragma warning restore 612, 618
         }

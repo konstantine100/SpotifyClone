@@ -18,6 +18,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<DataContext>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IUserDetailsService, UserDetailsService>();
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 

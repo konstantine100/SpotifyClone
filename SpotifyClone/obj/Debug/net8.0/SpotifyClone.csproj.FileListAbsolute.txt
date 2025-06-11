@@ -173,3 +173,4 @@ C:\Users\kmami\RiderProjects\SpotifyClone\SpotifyClone\obj\Debug\net8.0\refint\S
 C:\Users\kmami\RiderProjects\SpotifyClone\SpotifyClone\obj\Debug\net8.0\SpotifyClone.pdb
 C:\Users\kmami\RiderProjects\SpotifyClone\SpotifyClone\obj\Debug\net8.0\SpotifyClone.genruntimeconfig.cache
 C:\Users\kmami\RiderProjects\SpotifyClone\SpotifyClone\obj\Debug\net8.0\ref\SpotifyClone.dll
+C:\Users\kmami\RiderProjects\SpotifyClone\SpotifyClone\obj\Debug\net8.0\SpotifyClone.sourcelink.json

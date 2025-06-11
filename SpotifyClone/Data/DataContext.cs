@@ -7,6 +7,7 @@ public class DataContext : DbContext
 {
     public DbSet<User> Users { get; set; }
     public DbSet<Album> Albums { get; set; }
+    public DbSet<Artist> Artists { get; set; }
     public DbSet<ArtistDetails> ArtistDetails { get; set; }
     public DbSet<Genre> Genres { get; set; }
     public DbSet<Playlist> Playlists { get; set; }
@@ -16,100 +17,93 @@ public class DataContext : DbContext
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // User - UserDetails (One-to-One)
+        // Configure cascade delete behavior to prevent cycles
+        
+        // SongComposers relationships - prevent cascade cycles
+        modelBuilder.Entity<SongComposers>()
+            .HasOne(sc => sc.Artist)
+            .WithMany(a => a.ArtistComposedSongs)
+            .HasForeignKey(sc => sc.ArtistId)
+            .OnDelete(DeleteBehavior.Restrict); // Changed from Cascade to Restrict
+            
+        modelBuilder.Entity<SongComposers>()
+            .HasOne(sc => sc.Song)
+            .WithMany(s => s.SongComposers)
+            .HasForeignKey(sc => sc.SongId)
+            .OnDelete(DeleteBehavior.Cascade); // Keep cascade for Song -> SongComposers
+
+        // Genre relationships - prevent multiple cascade paths
+        modelBuilder.Entity<Genre>()
+            .HasOne(g => g.Artist)
+            .WithMany(a => a.Genres)
+            .HasForeignKey(g => g.ArtistId)
+            .OnDelete(DeleteBehavior.Restrict);
+            
+        modelBuilder.Entity<Genre>()
+            .HasOne(g => g.Album)
+            .WithMany(a => a.Genres)
+            .HasForeignKey(g => g.AlbumId)
+            .OnDelete(DeleteBehavior.Restrict);
+            
+        modelBuilder.Entity<Genre>()
+            .HasOne(g => g.Song)
+            .WithMany(s => s.Genres)
+            .HasForeignKey(g => g.SongId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // Playlist relationships
+        modelBuilder.Entity<Playlist>()
+            .HasOne(p => p.UserDetails)
+            .WithMany(ud => ud.Playlists)
+            .HasForeignKey(p => p.UserDetailsId)
+            .OnDelete(DeleteBehavior.Restrict);
+            
+        modelBuilder.Entity<Playlist>()
+            .HasOne(p => p.Artist)
+            .WithMany(a => a.Playlists)
+            .HasForeignKey(p => p.ArtistId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // Configure many-to-many relationship for Song-Playlist
+        modelBuilder.Entity<Song>()
+            .HasMany(s => s.Playlists)
+            .WithMany(p => p.Songs)
+            .UsingEntity(j => j.ToTable("SongPlaylists"));
+
+        // User-Artist relationship (one-to-one)
+        modelBuilder.Entity<User>()
+            .HasOne(u => u.Artist)
+            .WithOne(a => a.User)
+            .HasForeignKey<Artist>(a => a.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // User-UserDetails relationship (one-to-one)
         modelBuilder.Entity<User>()
             .HasOne(u => u.UserDetails)
             .WithOne(ud => ud.User)
             .HasForeignKey<UserDetails>(ud => ud.UserId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        // User - Artist (One-to-One)
-        modelBuilder.Entity<User>()
-            .HasOne(u => u.Artist)
-            .WithOne(a => a.User)
-            .HasForeignKey<Artist>(a => a.UserId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        // Artist - ArtistDetails (One-to-One)
+        // Artist-ArtistDetails relationship (one-to-one)
         modelBuilder.Entity<Artist>()
             .HasOne(a => a.Details)
             .WithOne(ad => ad.Artist)
             .HasForeignKey<ArtistDetails>(ad => ad.ArtistId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        // Artist - Albums (One-to-Many)
+        // Artist-Album relationship
         modelBuilder.Entity<Album>()
-            .HasOne(al => al.Artist)
+            .HasOne(a => a.Artist)
             .WithMany(ar => ar.Albums)
-            .HasForeignKey(al => al.ArtistId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .HasForeignKey(a => a.ArtistId)
+            .OnDelete(DeleteBehavior.Cascade);
 
-        // Album - Songs (One-to-Many)
+        // Album-Song relationship
         modelBuilder.Entity<Song>()
             .HasOne(s => s.Album)
-            .WithMany(al => al.Songs)
+            .WithMany(a => a.Songs)
             .HasForeignKey(s => s.AlbumId)
             .OnDelete(DeleteBehavior.Cascade);
-
-        // SongComposers (Many-to-Many between Song and Artist)
-        modelBuilder.Entity<SongComposers>()
-            .HasOne(sc => sc.Song)
-            .WithMany(s => s.SongComposers)
-            .HasForeignKey(sc => sc.SongId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        modelBuilder.Entity<SongComposers>()
-            .HasOne(sc => sc.Artist)
-            .WithMany(a => a.ArtistComposedSongs)
-            .HasForeignKey(sc => sc.ArtistId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        // Song - Playlists (Many-to-Many)
-        modelBuilder.Entity<Song>()
-            .HasMany(s => s.Playlists)
-            .WithMany(p => p.Songs)
-            .UsingEntity(j => j.ToTable("SongPlaylists"));
-
-        // Genre relationships - Prevent cascade cycles
-        modelBuilder.Entity<Genre>()
-            .HasOne(g => g.Artist)
-            .WithMany(a => a.Genres)
-            .HasForeignKey(g => g.ArtistId)
-            .OnDelete(DeleteBehavior.NoAction);
-
-        modelBuilder.Entity<Genre>()
-            .HasOne(g => g.Album)
-            .WithMany(al => al.Genres)
-            .HasForeignKey(g => g.AlbumId)
-            .OnDelete(DeleteBehavior.NoAction);
-
-        modelBuilder.Entity<Genre>()
-            .HasOne(g => g.Song)
-            .WithMany(s => s.Genres)
-            .HasForeignKey(g => g.SongId)
-            .OnDelete(DeleteBehavior.NoAction);
-
-        // Playlist relationships
-        modelBuilder.Entity<Playlist>()
-            .HasOne(p => p.UserDetails)
-            .WithMany()
-            .HasForeignKey(p => p.UserDetailsId)
-            .OnDelete(DeleteBehavior.NoAction);
-
-        modelBuilder.Entity<Playlist>()
-            .HasOne(p => p.Artist)
-            .WithMany(a => a.Playlists)
-            .HasForeignKey(p => p.ArtistId)
-            .OnDelete(DeleteBehavior.NoAction);
-
-        // Configure indexes for better performance
-        modelBuilder.Entity<User>()
-            .HasIndex(u => u.Email)
-            .IsUnique();
-
-        modelBuilder.Entity<UserDetails>()
-            .HasIndex(ud => ud.Username)
-            .IsUnique();
 
         base.OnModelCreating(modelBuilder);
     }

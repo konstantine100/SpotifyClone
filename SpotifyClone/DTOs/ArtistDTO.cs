@@ -10,7 +10,9 @@ public class ArtistDTO
     public COUNTRY Country { get; set; }
     public List<GenreDTO> Genres { get; set; } 
     public bool IsVerified { get; set; }
+    public int Listens { get; set; }
     
+    public ArtistDetailsDTO Details { get; set; }
     public List<AlbumDTO> Albums { get; set; }
     public List<PlaylistDTO> Playlists { get; set; }
 }

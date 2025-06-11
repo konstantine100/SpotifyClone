@@ -9,4 +9,5 @@ public class UserDetails
     public string Username { get; set; }
     public string? ProfilePicture { get; set; }
     public bool SeeExplecitContent { get; set; } = false;
+    public List<Playlist> Playlists { get; set; } = new List<Playlist>();
 }
