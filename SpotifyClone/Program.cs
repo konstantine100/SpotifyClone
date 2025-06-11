@@ -20,6 +20,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<DataContext>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserDetailsService, UserDetailsService>();
+builder.Services.AddScoped<IArtistService, ArtistService>();
+builder.Services.AddScoped<IArtistDetailsServices, ArtistDetailsService>();
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
