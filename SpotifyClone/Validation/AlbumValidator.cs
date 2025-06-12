@@ -13,5 +13,8 @@ public class AlbumValidator : AbstractValidator<Album>
         RuleFor(x => x.AlbumCover)
             .NotEmpty()
             .MaximumLength(100000);
+        RuleFor(x => x.ReleaseYear)
+            .NotEmpty()
+            .LessThanOrEqualTo(DateTime.Now.Year);
     }
 }

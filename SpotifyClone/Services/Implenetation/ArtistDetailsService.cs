@@ -101,13 +101,13 @@ public class ArtistDetailsService : IArtistDetailsServices
         }
         else
         {
-            if (artist.Details != null)
+            if (artist.Details == null)
             {
                 var response = new ApiResponse<ArtistDetailsDTO>
                 {
                     Data = null,
-                    Message = "Artist details already exists",
-                    Status = StatusCodes.Status403Forbidden,
+                    Message = "artist details not found",
+                    Status = StatusCodes.Status404NotFound,
                 };
                 return response;
             }

@@ -160,6 +160,7 @@ namespace SpotifyClone.Migrations
                     AlbumId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Duration = table.Column<TimeSpan>(type: "time", nullable: false),
+                    SongUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Lyrics = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TrackNumber = table.Column<int>(type: "int", nullable: false),
                     TimesPlayed = table.Column<int>(type: "int", nullable: false),
@@ -174,6 +175,30 @@ namespace SpotifyClone.Migrations
                         principalTable: "Albums",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ArtistSong",
+                columns: table => new
+                {
+                    FeaturingArtistId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    FeaturingSongsId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ArtistSong", x => new { x.FeaturingArtistId, x.FeaturingSongsId });
+                    table.ForeignKey(
+                        name: "FK_ArtistSong_Artists_FeaturingArtistId",
+                        column: x => x.FeaturingArtistId,
+                        principalTable: "Artists",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ArtistSong_Songs_FeaturingSongsId",
+                        column: x => x.FeaturingSongsId,
+                        principalTable: "Songs",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -277,6 +302,11 @@ namespace SpotifyClone.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_ArtistSong_FeaturingSongsId",
+                table: "ArtistSong",
+                column: "FeaturingSongsId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Genres_AlbumId",
                 table: "Genres",
                 column: "AlbumId");
@@ -333,6 +363,9 @@ namespace SpotifyClone.Migrations
         {
             migrationBuilder.DropTable(
                 name: "ArtistDetails");
+
+            migrationBuilder.DropTable(
+                name: "ArtistSong");
 
             migrationBuilder.DropTable(
                 name: "Genres");

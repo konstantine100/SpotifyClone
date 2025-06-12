@@ -23,7 +23,7 @@ public class ArtistService : IArtistService
         _mapper = mapper;
     }
     
-    public ApiResponse<ArtistDTO> PostArtist(Guid userId, AddArtist request)
+    public ApiResponse<ArtistDTO> PostArtist(Guid userId, AddArtist request, COUNTRY country)
     {
         var user = _context.Users
             .Include(x => x.Artist)
@@ -69,6 +69,7 @@ public class ArtistService : IArtistService
                 }
                 else
                 {
+                    artist.Country = country;
                     artist.UserId = user.Id;
                     user.Artist = artist;
                     _context.SaveChanges();
@@ -114,7 +115,7 @@ public class ArtistService : IArtistService
             
             var response = new ApiResponse<GenreDTO>
             {
-                Data = _mapper.Map<GenreDTO>(genre),
+                Data = _mapper.Map<GenreDTO>(genreToAdd),
                 Message = null,
                 Status = StatusCodes.Status200OK
             };
@@ -324,7 +325,7 @@ public class ArtistService : IArtistService
         }
     }
 
-    public ApiResponse<ArtistDTO> ChangeArtist(Guid artistId, string changeParametr, string changeTo, COUNTRY? country)
+    public ApiResponse<ArtistDTO> ChangeArtist(Guid artistId, string changeParametr, string? changeTo, COUNTRY? country)
     {
         var artist = _context.Artists
             .FirstOrDefault(x => x.Id == artistId);

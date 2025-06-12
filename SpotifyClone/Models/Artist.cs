@@ -17,6 +17,7 @@ public class Artist
     public ArtistDetails Details { get; set; }
     public int Listens { get; set; } = 0;
     public List<Album> Albums { get; set; } = new List<Album>();
+    public List<Song> FeaturingSongs { get; set; } = new List<Song>();
     public List<SongComposers> ArtistComposedSongs { get; set; } = new List<SongComposers>();
     public List<Playlist> Playlists { get; set; } = new List<Playlist>();
 }

@@ -19,9 +19,9 @@ public class ArtistController : ControllerBase
     }
 
     [HttpPost("post-artist")]
-    public ActionResult PostArtist(Guid userId, AddArtist request)
+    public ActionResult PostArtist(Guid userId, AddArtist request, COUNTRY country)
     {
-        var artist = _artistService.PostArtist(userId, request);
+        var artist = _artistService.PostArtist(userId, request, country);
         return Ok(artist);
     }
     
@@ -61,7 +61,7 @@ public class ArtistController : ControllerBase
     }
     
     [HttpPut("update-artist")]
-    public ActionResult ChangeArtist(Guid artistId, string changeParametr, string changeTo, COUNTRY? country)
+    public ActionResult ChangeArtist(Guid artistId, string changeParametr, string? changeTo, COUNTRY? country)
     {
         var artist = _artistService.ChangeArtist(artistId, changeParametr, changeTo, country);
         return Ok(artist);

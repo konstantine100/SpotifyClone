@@ -70,6 +70,20 @@ public class DataContext : DbContext
             .WithMany(p => p.Songs)
             .UsingEntity(j => j.ToTable("SongPlaylists"));
 
+        // Configure many-to-many relationship for Artist-Song (featuring artists)
+        modelBuilder.Entity<Artist>()
+            .HasMany(a => a.FeaturingSongs)
+            .WithMany(s => s.FeaturingArtist)
+            .UsingEntity<Dictionary<string, object>>(
+                "ArtistSong",
+                j => j.HasOne<Song>().WithMany().HasForeignKey("FeaturingSongsId").OnDelete(DeleteBehavior.Restrict),
+                j => j.HasOne<Artist>().WithMany().HasForeignKey("FeaturingArtistId").OnDelete(DeleteBehavior.Restrict),
+                j =>
+                {
+                    j.HasKey("FeaturingArtistId", "FeaturingSongsId");
+                    j.ToTable("ArtistSong");
+                });
+
         // User-Artist relationship (one-to-one)
         modelBuilder.Entity<User>()
             .HasOne(u => u.Artist)

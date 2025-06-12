@@ -22,6 +22,21 @@ namespace SpotifyClone.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("ArtistSong", b =>
+                {
+                    b.Property<Guid>("FeaturingArtistId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("FeaturingSongsId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("FeaturingArtistId", "FeaturingSongsId");
+
+                    b.HasIndex("FeaturingSongsId");
+
+                    b.ToTable("ArtistSong", (string)null);
+                });
+
             modelBuilder.Entity("PlaylistSong", b =>
                 {
                     b.Property<Guid>("PlaylistsId")
@@ -225,6 +240,10 @@ namespace SpotifyClone.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("SongUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("TimesPlayed")
                         .HasColumnType("int");
 
@@ -333,6 +352,21 @@ namespace SpotifyClone.Migrations
                         .IsUnique();
 
                     b.ToTable("UserDetails");
+                });
+
+            modelBuilder.Entity("ArtistSong", b =>
+                {
+                    b.HasOne("SpotifyClone.Models.Artist", null)
+                        .WithMany()
+                        .HasForeignKey("FeaturingArtistId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SpotifyClone.Models.Song", null)
+                        .WithMany()
+                        .HasForeignKey("FeaturingSongsId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("PlaylistSong", b =>

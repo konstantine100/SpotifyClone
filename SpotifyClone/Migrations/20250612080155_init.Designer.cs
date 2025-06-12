@@ -12,7 +12,7 @@ using SpotifyClone.Data;
 namespace SpotifyClone.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250611163641_init")]
+    [Migration("20250612080155_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -24,6 +24,21 @@ namespace SpotifyClone.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("ArtistSong", b =>
+                {
+                    b.Property<Guid>("FeaturingArtistId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("FeaturingSongsId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("FeaturingArtistId", "FeaturingSongsId");
+
+                    b.HasIndex("FeaturingSongsId");
+
+                    b.ToTable("ArtistSong", (string)null);
+                });
 
             modelBuilder.Entity("PlaylistSong", b =>
                 {
@@ -228,6 +243,10 @@ namespace SpotifyClone.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("SongUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("TimesPlayed")
                         .HasColumnType("int");
 
@@ -336,6 +355,21 @@ namespace SpotifyClone.Migrations
                         .IsUnique();
 
                     b.ToTable("UserDetails");
+                });
+
+            modelBuilder.Entity("ArtistSong", b =>
+                {
+                    b.HasOne("SpotifyClone.Models.Artist", null)
+                        .WithMany()
+                        .HasForeignKey("FeaturingArtistId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SpotifyClone.Models.Song", null)
+                        .WithMany()
+                        .HasForeignKey("FeaturingSongsId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("PlaylistSong", b =>
