@@ -10,7 +10,6 @@ public class SongDTO
     public int TrackNumber { get; set; }
     public int TimesPlayed { get; set; } = 0;
     public bool IsExplicit { get; set; }
-    public List<ArtistDTO> FeaturingArtist { get; set; }
     public List<SongComposersDTO> SongComposers { get; set; }
     public List<GenreDTO> Genres { get; set; }
 }
