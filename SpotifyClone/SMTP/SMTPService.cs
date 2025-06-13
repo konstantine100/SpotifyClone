@@ -8,7 +8,7 @@ internal class SMTPService
     public void SendEmail(string toAddress, string subject, string body)
     {
         string senderEmail = "k.maminaishvili@gmail.com";
-        string appPassword = "ykws duyg kznm rhiu";
+        string appPassword = "chasvit rame";
 
 
         MailMessage mail = new MailMessage();

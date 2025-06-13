@@ -73,6 +73,8 @@ public class SongService : ISongService
                 {
                     song.AlbumId = album.Id;
                     album.Songs.Add(song);
+                    album.SongCount++;
+                    album.AlbumLength = album.AlbumLength + song.Duration;
                     _context.SaveChanges();
                     
                     var response = new ApiResponse<SongDTO>
@@ -909,6 +911,8 @@ public class SongService : ISongService
                     _context.Songs.Remove(song);
                     album.OverallPlayed = album.OverallPlayed - song.TimesPlayed;
                     artist.Listens = artist.Listens - song.TimesPlayed;
+                    album.SongCount--;
+                    album.AlbumLength = album.AlbumLength - song.Duration;
                     _context.SaveChanges();
                     
                     var response = new ApiResponse<SongDTO>
